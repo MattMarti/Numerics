@@ -1,6 +1,6 @@
 %% Test_finite_difference.m
 % 
-% Test case for the finite difference function
+% Test case for the finite difference function.
 % 
 % @author: Matt Marti
 % @date: 2019-05-06

@@ -1,4 +1,4 @@
-function x = secantrootsolve(f, a, b, maxiter, errstop)
+function x = secant_root_solve(f, a, b, maxiter, errstop)
 % Solves for the roots of a function using the secant method
 % 
 % @arg

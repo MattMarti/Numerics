@@ -1,7 +1,6 @@
-%% Test_rungekuttaint.m
+%% Test_runge_kutta.m
 % 
-% Test script for the Runge Kutta integration function developed as the
-% solution to the AOE 4404 Homework 6 Problem 3.
+% Test script for the Runge Kutta integration function.
 % 
 % @author: Matt Marti
 % @date: 2019-04-29

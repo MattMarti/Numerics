@@ -1,4 +1,4 @@
-function [ydothist] = finitedifference(yhist, thist, n)
+function [ydothist] = finite_difference(yhist, thist, n)
 % Foward, Central, Backwards finite difference calculation of derivative
 % This function uses the Central Finite Difference method to compute the
 % derivative for the given data vector. At the ends of the array, central

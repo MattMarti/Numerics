@@ -1,8 +1,6 @@
-%% Test_cubicspline.m
+%% Test_Cubic_Spline.m
 % 
-% Test case for the cubic spline function. Based on the driver script for
-% the solution to AOE 4404 Assignment 5, problems 1 to 3. Cubic spline and
-% Lagrange interpolation.
+% Test case for the cubic spline function.
 % 
 % @author: Matt Marti
 % @date: 2019-05-06

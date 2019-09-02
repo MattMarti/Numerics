@@ -1,7 +1,6 @@
-%% Test_secantrootsolve.m
+%% Test_secant_root_solve.m
 % 
-% Test case for the Secant Root Solver function. Based on the solution to
-% Problem 2 of Homework 1 f AOE 4404 Numerical Methods
+% Test case for the Secant Root Solver function.
 % 
 % Use Graphical technique, bisection method, false-position, fixed-point
 % iteration, Netwon method, and secant method to find the first root of
