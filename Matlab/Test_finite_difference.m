@@ -55,3 +55,30 @@ for n = 1:11
         'Error for low order polynomial is not zero');
 end
 
+%% Test 3: Test data with uneven time vector values
+
+% Function input
+thist = zeros(1000, 1);
+h = 0.1;
+for ii = 2:length(thist)
+    thist(ii) = thist(ii-1) + h*(mod(ii-1, 10)+1);
+end
+yhist = [5 + 6*thist + 4*thist.^2, 5 - 3*thist];
+n = 5;
+
+% Truth value
+ydottruthhist = [6 + 8*thist, - 3*ones(size(thist))];
+
+% Function call
+[ydothist] = finite_difference(yhist, thist, n);
+
+% Test
+% Test Function call
+errvec = [5e-8; 5e-8; 5e-8; 5e-8];
+for n = 1:4
+    [ydothist] = finite_difference(yhist, thist, n+1);
+    errhist = ydothist - ydottruthhist;
+    maxerr = max(max(abs(errhist)));
+    assert(maxerr < errvec(n), ...
+        'Error for low order polynomial is not zero');
+end
