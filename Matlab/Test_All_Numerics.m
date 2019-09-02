@@ -1,5 +1,5 @@
-function Test_All()
-% Test_All.m
+function Test_All_Numerics()
+% Test_All_Numerics.m
 % 
 % Recursively searches the Matlab folder in the Hybrid-Motor-Analysis repo
 % and runs scripts that begin with the characters "test_" (Case
@@ -9,12 +9,14 @@ function Test_All()
 % @date: 2019-08-31
 
 clear, clc, close all
+this_file_name = fullfile('Numerics', 'Matlab', 'Test_All.m');
+
 
 %% Recursively search for test scripts
 
 % Determine repo location in the directory tree
 m = inmem('-completenames');
-full_testall_path = m{contains(m, 'Test_All.m')};
+full_testall_path = m{contains(m, this_file_name)};
 idum = regexp(full_testall_path, filesep);
 path = full_testall_path(1:idum(end));
 

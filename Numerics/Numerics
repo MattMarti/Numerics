@@ -1,0 +1,9 @@
+
+/*
+Main header file for Numerics library
+
+@author: Matt Marti, Wade Foster
+*/
+
+#include <secant_root_solve.hpp>
+#include <Cubic_Spline.hpp>
