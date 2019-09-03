@@ -1,6 +1,7 @@
 #ifndef NUMERICS_CUBIC_SPLINE_HPP
 #define NUMERICS_CUBIC_SPLINE_HPP
 
+#include <Eigen>
 #include <vector>
 #include <tuple>
 
@@ -10,13 +11,13 @@ namespace Numerics {
     Cubic Spline class allows for interpolation between data points
 
     @author: Matt Marti
-    @date: 2019 - 07 - 20
+    @date: 2019-09-03
      */
     class Cubic_Spline {
 
-        std::vector<std::vector<double>> _akmat, _bkmat, _ckmat, _dkmat;
-        std::vector<double> xkvec;
-        bool extrapolation_enabled_flag = 1;
+        Eigen::MatrixXd _akmat, _bkmat, _ckmat, _dkmat;
+        std::vector<double> _xkvec;
+        bool _extrapolation_enabled_flag = 0;
 
     public:
 
@@ -42,7 +43,7 @@ namespace Numerics {
                          coefficient.
 
         @author: Matt Marti
-        @date: 2019-07-21
+        @date: 2019-09-03
         */
         Cubic_Spline(
             const std::vector<double> * xkvec,
@@ -73,12 +74,12 @@ namespace Numerics {
                         Interpolated function derivative value
 
         @author: Matt Marti
-        @date: 2019-07-21
+        @date: 2019-09-03
         */
         double operator()(double xinter);
-        std::vector<double> operator()(std::vector<double> xinter);
+        std::vector<double> operator()(std::vector<double>* xinter);
     };
 
-} // namespace Numerics
+}; // namespace Numerics
 
 #endif // NUMERICS_CUBIC_SPLINE_HPP
