@@ -20,7 +20,7 @@ TEST_CASE("Test Cubic_Spline on a 1-D case", "[Cubic-Spline]") {
     //df = @(x) cos(x);
     vector<double> xkvec, fkvec, xinterp;
     vector<vector<double>> fslope;
-    for (int ii = 0; ii <= 20; ii++)
+    for (int ii = 0; ii <= 20; ii++) xkvec[ii] = 
     xkvec = linspace(0, 10, 20);
     fkvec = f(xkvec);
     xinter = linspace(0, 10, 1000);
