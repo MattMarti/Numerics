@@ -54,7 +54,7 @@ TEST_CASE("Test Cubic_Spline on a 1-D case", "[Cubic_Spline]") {
     REQUIRE(maxerr < 2.5e-4);
 }
 
-TEST_CASE("Test Cubic_Spline for extrapolation", "[Cubic-Spline]") {
+TEST_CASE("Test Cubic_Spline for extrapolation", "[Cubic_Spline]") {
     using namespace std;
     using namespace Numerics;
 
@@ -88,7 +88,7 @@ TEST_CASE("Test Cubic_Spline for extrapolation", "[Cubic-Spline]") {
 }
 
 /*
-TEST_CASE("Test Cubic_Spline on a Multi-Dimensional case", "[Cubic-Spline]") {
+TEST_CASE("Test Cubic_Spline on a Multi-Dimensional case", "[Cubic_Spline]") {
     using namespace std;
 
     // Given
