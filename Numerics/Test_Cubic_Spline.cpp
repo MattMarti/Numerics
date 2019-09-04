@@ -13,7 +13,7 @@ Lagrange interpolation.
 @date: 2019-09-01
 */
 
-TEST_CASE("Test Cubic_Spline on a 1-D case", "[Cubic-Spline]") {
+TEST_CASE("Test Cubic_Spline on a 1-D case", "[Cubic_Spline]") {
     using namespace std;
     using namespace Numerics;
 
@@ -45,14 +45,13 @@ TEST_CASE("Test Cubic_Spline on a 1-D case", "[Cubic-Spline]") {
     std::vector<double> finter = cs(&xinter);
 
     // Test Function truth values
-    double err = INFINITY;
-    double errii;
+    double maxerr = 0;
+    double err;
     for (size_t ii = 0; ii < finter.size(); ii++) {
-        errii = abs(finter[ii] - ftrue[ii]);
-        //cout << errii << endl;
-        if ( errii < err ) err = errii;
+        err = abs(finter[ii] - ftrue[ii]);
+        if ( err > maxerr ) maxerr = err;
     }
-    REQUIRE(err < 1e-6);
+    REQUIRE(maxerr < 2.5e-4);
 }
 
 TEST_CASE("Test Cubic_Spline for extrapolation", "[Cubic-Spline]") {
