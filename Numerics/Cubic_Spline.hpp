@@ -35,6 +35,9 @@ namespace Numerics {
                         Dependent variable data points
         fslope        - m x 2 double matrix (optional)
                         Function slope at boundary points
+        extrapolation_enabled - bool
+                                Enables the spline to extrapolate beyond
+                                given dataset
 
         @return
         splineDataMat - m x n x 5 double matrix
@@ -48,7 +51,8 @@ namespace Numerics {
         Cubic_Spline(
             const std::vector<double> * xkvec,
             const std::vector<double> * fkvec,
-            const std::vector<double> * fslope);
+            const std::vector<double> * fslope,
+            bool extrapolation_enabled = true);
 
         /*
         Cubic spline interpolation function

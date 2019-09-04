@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <Cubic_Spline.hpp>
+#include <iostream>
 
 /*
 Test case for the cubic spline function. Based on the driver script for
@@ -16,29 +17,31 @@ TEST_CASE("Test Cubic_Spline on a 1-D case", "[Cubic-Spline]") {
     using namespace std;
     using namespace Numerics;
 
-    // Given
+    // Parameters
     //f = @(x) sin(x);
     //df = @(x) cos(x);
     vector<double> xkvec, fkvec, xinter, ftrue;
     vector<double> fslope;
     xkvec = vector<double>(21);
     fkvec = vector<double>(21);
-    for (int ii = 0; ii <= 21; ii++) {
+    for (int ii = 0; ii <= 20; ii++) {
         xkvec[ii] = 0.5*ii; // xkvec = linspace(0, 10, 20);
         fkvec[ii] = sin(xkvec[ii]); // fkvec = f(xkvec);
-    }
-    xinter = vector<double>(1001);
-    ftrue = vector<double>(1001);
-    for (int ii = 0; ii <= 1001; ii++) {
-        xinter[ii] = 0.01*ii; // xinter = linspace(0, 10, 1000);
-        ftrue[ii] = sin(xinter[ii]);
     }
     fslope = vector<double>(2); // fslope = [cos(xkvec(1)), cos(xkvec(end))]; % Clambed B.C.s
     fslope[0] = cos(xkvec[0]);
     fslope[1] = cos(xkvec[20]);
 
+    // Interpolation values
+    xinter = vector<double>(101);
+    ftrue = vector<double>(101);
+    for (int ii = 0; ii < 100; ii++) {
+        xinter[ii] = 0.1*ii; // xinter = linspace(0, 10, 1000);
+        ftrue[ii] = sin(xinter[ii]);
+    }
+
     // Run function
-    Cubic_Spline cs = Cubic_Spline(&xkvec, &fkvec, &fslope);
+    Cubic_Spline cs = Cubic_Spline(&xkvec, &fkvec, &fslope, false);
     std::vector<double> finter = cs(&xinter);
 
     // Test Function truth values
@@ -46,13 +49,43 @@ TEST_CASE("Test Cubic_Spline on a 1-D case", "[Cubic-Spline]") {
     double errii;
     for (size_t ii = 0; ii < finter.size(); ii++) {
         errii = abs(finter[ii] - ftrue[ii]);
-        if (err > errii) err = errii;
+        //cout << errii << endl;
+        if ( errii < err ) err = errii;
     }
-    REQUIRE(err < 2.5e-4);
+    REQUIRE(err < 1e-6);
 }
 
-TEST_CASE("Test for extrapolation", "[Cubic-Spline]") {
+TEST_CASE("Test Cubic_Spline for extrapolation", "[Cubic-Spline]") {
+    using namespace std;
+    using namespace Numerics;
 
+    // Parameters
+    //f = @(x) sin(x);
+    //df = @(x) cos(x);
+    vector<double> xkvec, fkvec, xinter, ftrue;
+    vector<double> fslope;
+    xkvec = vector<double>(21);
+    fkvec = vector<double>(21);
+    for (int ii = 0; ii <= 20; ii++) {
+        xkvec[ii] = 0.5*ii; // xkvec = linspace(0, 10, 20);
+        fkvec[ii] = sin(xkvec[ii]); // fkvec = f(xkvec);
+    }
+    fslope = vector<double>(2); // fslope = [cos(xkvec(1)), cos(xkvec(end))]; % Clambed B.C.s
+    fslope[0] = cos(xkvec[0]);
+    fslope[1] = cos(xkvec[20]);
+
+    // Input values
+    double xinter_a = -0.05;
+    double xinter_b = 10.05;
+    double ftrue_a = sin(xinter_a);
+    double ftrue_b = sin(xinter_b);
+
+    // Run function
+    Cubic_Spline cs = Cubic_Spline(&xkvec, &fkvec, &fslope);
+    
+    // Check results
+    REQUIRE(abs(cs(xinter_a) - ftrue_a) < 1e-5);
+    REQUIRE(abs(cs(xinter_b) - ftrue_b) < 1e-5);
 }
 
 /*

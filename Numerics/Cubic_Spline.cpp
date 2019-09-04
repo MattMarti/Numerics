@@ -5,9 +5,13 @@
 Numerics::Cubic_Spline::Cubic_Spline(
         const std::vector<double> * xkvec,
         const std::vector<double> * fkvec,
-        const std::vector<double> * fslope) {
+        const std::vector<double> * fslope,
+        bool extrapolation_enabled) {
     using namespace Eigen;
     using namespace std;
+
+    // Extrapolation condition
+    _extrapolation_enabled_flag = extrapolation_enabled;
 
     // Size
     size_t nx = xkvec->size();
@@ -57,7 +61,7 @@ Numerics::Cubic_Spline::Cubic_Spline(
     }
     if (boundary_is_clamped) {
         xstar(0) = 3 * ( (_akmat(1, 0) - _akmat(0, 0)) / hkvec(0) - (*fslope)[0] );
-        xstar(n) = 3 * ( (*fslope)[1] - (_akmat(n, 0) - _akmat(n, 0)) / hkvec(n) );
+        xstar(n) = 3 * ( (*fslope)[1] - (_akmat(n, 0) - _akmat(n-1, 0)) / hkvec(n-1) );
     }
 
     // Solve tri - diagonal system of equations
@@ -81,21 +85,28 @@ double Numerics::Cubic_Spline::operator()(double xinter) {
     size_t n = nx - 1;
 
     // Check that interpolated value is within function range
-    if (!_extrapolation_enabled_flag)
-        assert(xinter >= _xkvec[0] && xinter <= _xkvec[n]);//, \
-            //"Interpolation value not within bounds");
+    bool is_within_range = xinter >= _xkvec[0] && xinter <= _xkvec[n];
+    if (!_extrapolation_enabled_flag) assert(is_within_range);
 
     // Find x value just below xinter(i)
     size_t k = 1;
-    while (k < nx) {
-        if (xinter < _xkvec[k]) {
-            k = k - 1;
-            break;
+    if (is_within_range) {
+        while (k < nx) {
+            if (xinter < _xkvec[k]) {
+                k = k - 1;
+                break;
+            }
+            k = k + 1;
         }
-        k = k + 1;
+        if (k >= nx) { // Point is on upper boundary) {
+            return _akmat(nx, 0);
+        }
     }
-    if (k >= nx) { // Point is on upper boundary) {
-        return _akmat(nx, 0);
+    else if (xinter > _xkvec[n]) {
+        k = n;
+    }
+    else {
+        k = 0;
     }
 
     // Spline interpolation
