@@ -5,5 +5,7 @@ Main header file for Numerics library
 @author: Matt Marti, Wade Foster
 */
 
+#include <Eigen>
 #include <secant_root_solve.hpp>
 #include <Cubic_Spline.hpp>
+#include <finite_difference.hpp>

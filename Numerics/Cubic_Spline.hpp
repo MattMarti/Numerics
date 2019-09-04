@@ -1,7 +1,7 @@
 #ifndef NUMERICS_CUBIC_SPLINE_HPP
 #define NUMERICS_CUBIC_SPLINE_HPP
 
-#include <Eigen>
+#include <../eigen-git-mirror/Eigen/Eigen>
 #include <vector>
 #include <tuple>
 

@@ -1,127 +1,99 @@
-function [ydothist] = finitedifference(yhist, thist, n)
-% Foward, Central, Backwards finite difference calculation of derivative
-% This function uses the Central Finite Difference method to compute the
-% derivative for the given data vector. At the ends of the array, central
-% difference doesn't work, so the forward difference method and backwards
-% difference methods are used instead.
-% 
-% Note that this function decides for you to use forward and bakwards
-% differencing functions at either end of the dataset. This cannot be
-% turned off or changed.
-% 
-% @arg
-% yhist    - N x M double matrix
-%            Function value time history, where N is the length of the
-%            dataset and M is the number different things to take the 
-%            derivative of. M is usually 1.
-% h        - double
-%            Time step
-% n        - double (optional)
-%            Order of finite difference
-% 
-% @return
-% ydothist - N x M double matrix
-%            Finite difference derivative time history
-% 
-% @author: Matt Marti
-% @date: 2019-05-06
+#include <../eigen-git-mirror/Eigen/Eigen>
+#include <cmath>
+#include <finite_difference.hpp>
 
-% Input checking
-N = size(yhist, 1);
-assert(N >= n+1, 'Not enough data points for given order');
-if nargin < 3
-    n = 5;
-end
+std::vector<double> Numerics::finite_difference(std::vector<double> * yhist, std::vector<double> * thist, int n) {
+    using namespace std;
+    using namespace Eigen;
 
-% Preallocate output
-ydothist = zeros(size(yhist));
-hmat = zeros(n,n);
+    // Input checking
+    int N = yhist->size();
+    assert(N >= n + 1, "Not enough data points for given order");
 
-% Forward difference method
-for i = 1:n    
-    
-    % Delta t matrix
-    for j = 1:n
-        d = 1;
-        hj = thist(i+j) - thist(i); %h*j;
-        for k = 1:n
-            d = d*k;
-            hmat(j,k) = (hj^k)/d;
-        end
-    end
-    
-    % Forward finite difference
-    yfvec = yhist(i+1:i+n,:) - yhist(i,:);
-    
-    % Compute derivative
-    ydoti = hmat \ yfvec;
-    
-    % Assign output
-    ydothist(i,:) = ydoti(1,:);
-end
+    // Preallocate
+    vector<double> ydothist = vector<double>(yhist->size());
+    MatrixXd H = MatrixXd::Zero(n, n);
+    VectorXd diffvec = VectorXd::Zero(n);
+    VectorXd ydoti = VectorXd::Zero(n);
+    double hj;
+    int d, ii, jj, kk;
 
-% Central difference method
-for i = n+1:N-n
-    
-    % Delta t matrix
-    hmat_forward = zeros(n,n);
-    for j = 1:n
-        d = 1;
-        hj = thist(i+j) - thist(i); %h*j;
-        for k = 1:n
-            d = d*k;
-            hmat_forward(j,k) = (hj^k)/d;
-        end
-    end
-    
-    % Delta t matrix
-    hmat_backward = zeros(n,n);
-    for j = 1:n
-        d = 1;
-        hj = thist(i) - thist(i-j); %h*j;
-        for k = 1:n
-            d = d*k;
-            hmat_backward(j,k) = (hj^k)/d;
-        end
-    end
-    
-    % Forward finite difference
-    yfvec = yhist(i+1:i+n,:) - yhist(i,:);
-    
-    % Backward finite difference
-    ybvec = yhist(i,:) - yhist(i-1:-1:i-n,:);
-    
-    % Compute derivative
-    ydoti_f = hmat_forward \ yfvec;
-    ydoti_b = hmat_backward \ ybvec;
-    ydoti = 0.5 * (ydoti_f + ydoti_b);
-    
-    % Assign output
-    ydothist(i,:) = ydoti(1,:);
-end
+    // Forward difference method
+    for (ii = 0; ii < n; ii++) {
 
-% Backwards difference method
-for i = N-n+1:N
-    
-    % Delta t matrix
-    for j = 1:n
-        d = 1;
-        hj = thist(i) - thist(i-j); %h*j;
-        for k = 1:n
-            d = d*k;
-            hmat(j,k) = (hj^k)/d;
-        end
-    end
-    
-    % Backward finite difference
-    ybvec = yhist(i,:) - yhist(i-1:-1:i-n,:);
-    
-    % Compute derivative
-    ydoti = hmat \ ybvec;
-    
-    % Assign output
-    ydothist(i,:) = ydoti(1,:);
-end
+        // Delta t matrix
+        for (jj = 1; jj < n + 1; jj++) {
+            d = 1;
+            hj = (*thist)[ii + jj] - (*thist)[ii];
+            diffvec(jj-1) = (*yhist)[ii + jj] - (*yhist)[ii];
+            for (kk = 1; kk < n + 1; kk++) {
+                d = d * kk;
+                H(jj-1, kk-1) = pow(hj, kk) / d;
+            }
+        }
 
-end
+        // Compute derivative
+        ydoti = H.partialPivLu().solve(diffvec);
 
+        // Assign output
+        ydothist[ii] = ydoti(0);
+    }
+
+    // Central difference method
+    for (ii = n; ii < N - n; ii++) {
+
+        // Delta t matrix
+        for (jj = 1; jj < n + 1; jj++) {
+            d = 1;
+            hj = (*thist)[ii + jj] - (*thist)[ii];
+            diffvec(jj-1) = (*yhist)[ii + jj] - (*yhist)[ii];
+            for (kk = 1; kk < n + 1; kk++) {
+                d = d * kk;
+                H(jj-1, kk-1) = pow(hj, kk) / d;
+            }
+        }
+
+        // Forward finite difference
+        ydoti = 0.5 * H.partialPivLu().solve(diffvec);
+
+        // Delta t matrix
+        for (jj = 1; jj < n + 1; jj++) {
+            d = 1;
+            hj = (*thist)[ii] - (*thist)[ii - jj];
+            diffvec(jj-1) = (*yhist)[ii] - (*yhist)[ii - jj];
+            for (kk = 1; kk < n + 1; kk++) {
+                d = d * kk;
+                H(jj-1, kk-1) = pow(hj, kk) / d;
+            }
+        }
+
+        // Compute derivative
+        ydoti += 0.5 * H.partialPivLu().solve(diffvec);
+
+        // Assign output
+        ydothist[ii] = ydoti(0);
+    }
+
+    // Backwards difference method
+    for (ii = N - n; ii < N; ii++) {
+
+        // Delta t matrix
+        for (jj = 1; jj < n + 1; jj++) {
+            d = 1;
+            hj = (*thist)[ii] - (*thist)[ii - jj];
+            diffvec(jj-1) = (*yhist)[ii] - (*yhist)[ii - jj];
+            for (kk = 1; kk < n + 1; kk++) {
+                d = d * kk;
+                H(jj - 1, kk - 1) = pow(hj, kk) / d;
+            }
+        }
+
+        // Compute derivative
+        ydoti = H.partialPivLu().solve(diffvec);
+
+        // Assign output
+        ydothist[ii] = ydoti[0];
+    }
+    
+    return ydothist;
+}

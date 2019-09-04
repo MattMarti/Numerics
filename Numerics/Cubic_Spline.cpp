@@ -1,4 +1,4 @@
-#include <Eigen>
+#include <../eigen-git-mirror/Eigen/Eigen>
 #include <cmath>
 #include <Cubic_Spline.hpp>
 
