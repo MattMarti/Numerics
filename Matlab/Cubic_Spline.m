@@ -44,11 +44,8 @@ classdef Cubic_Spline
             m = size(fkvec, 1);
 
             % Check input array sizes
-            assert(size(xkvec,1) == 1 || size(xkvec,2) == 1, ...
-                'Argument ''xkvec'' is not a vector');
-            if size(xkvec,1) ~= 1
-                xkvec = xkvec';
-            end
+            assert(size(xkvec,1) == 1, ...
+                'Argument ''xkvec'' is not a row vector');
             this.xkvec = xkvec;
             assert(size(fkvec,2) == nx, ...
                 'Argument ''fkvec'' does not match length of ''xkvec''');
